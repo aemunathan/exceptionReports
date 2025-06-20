@@ -1,0 +1,1 @@
+# Placeholder: Gemini-style README generator script
