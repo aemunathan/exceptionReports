@@ -1,6 +1,17 @@
-
 def is_apigee_project(path):
-    return os.path.isdir(os.path.join(path, "apiproxy"))
+    possible_paths = [
+        os.path.join(path, "apiproxy"),
+        os.path.join(path, "apigee", "apigee-proxy"),
+        os.path.join(path, "edge", "apiproxy"),
+    ]
+    expected_subfolders = {"policies", "proxies", "targets"}
+
+    for base_path in possible_paths:
+        if os.path.isdir(base_path):
+            subdirs = set(os.listdir(base_path))
+            if not expected_subfolders.isdisjoint(subdirs):
+                return True
+    return False
 
 def apigee_tech_stack():
     return [
