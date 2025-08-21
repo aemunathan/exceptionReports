@@ -1,0 +1,132 @@
+R. Aemunathan, PMP
+Dallas–Fort Worth, TX · aemunathan@gmail.com · +91-97890-11455 · LinkedIn: [add URL] · GitHub: [add URL]
+SUMMARY
+Senior engineering leader (19+ years) in banking & telecom delivering large-scale application platforms, DevOps, and reliability. Proven record leading cross-functional teams, building resilient systems, and accelerating time-to-market. Currently upskilling in Generative AI and ML (MS in AI), with hands-on work in LLMs, RAG, and MLOps. Excited to drive Citi Innovation Labs initiatives at the intersection of applications development and GenAI—from experimentation to production.
+CORE COMPETENCIES
+Applications Development Leadership · GenAI & NLP · ML Ops & CI/CD · SRE/Observability · Cloud & Containers · Data Integration · Stakeholder Management · Risk/Compliance Mindset · Team Mentoring
+TECHNICAL SKILLS
+AI/ML: Transformers/LLMs, Prompt Engineering, RAG (vector search, hybrid search), fine-tuning (LoRA/QLoRA), Python (pandas, numpy, scikit-learn), PyTorch/TensorFlow, LangChain, LlamaIndex, Hugging Face, MLflow/DVC
+MLOps/Platforms: Docker, Kubernetes/OpenShift, Git/GitHub, CI/CD, model serving/monitoring
+Data/Infra: SQL (Oracle, MSSQL), NoSQL (MongoDB), message queues (IBM MQ), APIs, Splunk, AppDynamics
+Cloud: AWS, GCP, (exposure to Azure)
+Other: Jira, ServiceNow, Linux (RHEL), WebSphere, TIBCO BW, IIS, Nginx/IHS
+EXPERIENCE
+[Title Placeholder—e.g., Senior AI/ML Engineer / Applications Development Sr Lead] — [Company/Organization]
+Dec 2022 – Present | [City, State]
+(Use this section to capture your most recent experience; replace placeholders and keep the bullets results-focused.)
+Designed and built GenAI prototypes using LLMs with prompt engineering, tool use/agents, and guardrails; delivered POCs for classification, summarization, Q&A, and time-series insights over operational data.
+Implemented RAG pipelines with vector stores (e.g., FAISS/Pinecone) and hybrid search, including ingestion, chunking, embedding selection, and evaluation of retrieval quality.
+Fine-tuned models via LoRA/QLoRA on domain corpora using Hugging Face and PyTorch, comparing baseline vs. adapted models with offline/online metrics.
+Built MLOps workflows: data prep & feature pipelines, MLflow tracking, model registry, Docker packaging, Kubernetes/OpenShift deployment, and performance monitoring (latency, drift).
+Collaborated with product, data engineering, and compliance to align solutions with Responsible AI principles (privacy, PII handling, bias checks, explainability documentation).
+Topics learned & applied (MS AI): machine learning fundamentals (classification/regression), deep learning, transformers & attention, NLP, time-series, prompt engineering patterns, agentic systems, RAG, model evaluation, MLOps, cloud AI services, and AI risk & governance.
+Results (placeholders—replace with your metrics): reduced manual analysis time by ~X%; improved top-k retrieval precision by ~Y%; cut inference cost/latency by ~Z%.
+Tip: Add 1–2 bullet points per shipped project with concrete metrics (e.g., accuracy/latency/cost/MTTR/SLAs). Link to repos if permissible.
+VP, DevOps – Citi
+Sep 2019 – Nov 2022 | Chennai, India
+Led blue-green deployments enabling 24×7 testing and faster release cycles.
+Delivered integrated telemetry & analytics that improved MTTR by ~50% and reduced costs by ~21% through proactive detection and data-driven remediation.
+Drove capacity planning, performance tuning, and vulnerability remediation; owned weekly/monthly status reviews with business stakeholders.
+Mentored a 30+ member distributed team; set delivery standards and engineering best practices across application and infrastructure workstreams.
+Provided strategic guidance on platform roadmaps, reliability targets, and automation priorities.  
+Delivery Manager, MVNO – Plintron
+May 2011 – Aug 2019 | Global
+Launched new MVNO programs (OCS/Packet Core) across regions with 20+ engineers; authored HLD/LLD; streamlined stakeholder onboarding.
+Delivered a financial/travel product rollout in Europe; instituted PMI-aligned practices and continuous improvement.  
+Junior Telecom Officer – BSNL (Zonal Data Centre)
+Jan 2003 – Jun 2011 | India
+Planned/installed UMTS network expansions; led acceptance testing.
+Built in-house solutions (e.g., fleet tracking via PDN, remote ATM connectivity), cutting project costs by ~40%.
+Owned KPI benchmarking and zone-wide VAS project governance.  
+SELECTED PROJECTS (RECENT / RELEVANT)
+Domain RAG Assistant (POC): Retrieval-augmented QA over policy/technical docs using LangChain + FAISS; experimented with rerankers, chunk strategies, and evaluation harness (faithfulness, context recall).
+LLM Fine-tuning: LoRA/QLoRA adapters on instruction datasets; compared base vs. tuned models; documented training curves and eval metrics.
+Model Serving on OpenShift: Containerized inference service with autoscaling, request routing, and observability (latency, token throughput, errors).
+Time-Series Anomaly Finder: Python pipeline for anomaly scoring on infrastructure metrics; dashboarded insights with alerting hooks.
+Tip: Replace/augment with your strongest academic/side projects (GitHub links if possible).
+MS IN AI – SKILL SET (IN PROGRESS)
+Algorithms/Methods: Transformers, attention, transfer learning, embeddings, vector search, clustering, dimensionality reduction, sequence models, classic ML (LR, RF, XGBoost).
+NLP: tokenization, contextual embeddings, NER, summarization, QA, prompt tactics (CoT, ReAct), agentic workflows.
+MLOps: data/version control, experiment tracking (MLflow), model registry, A/B testing, monitoring, drift/outlier detection.
+Responsible AI: data privacy/PII handling, bias sources, mitigation, model interpretability & documentation.
+EDUCATION & CERTIFICATIONS
+M.S., Artificial Intelligence (in progress) — [University Name] | [City] | [YYYY–Present]
+MBA — Indira Gandhi National Open University (Distance), 2013  
+
+B.E., Electrical & Electronics (Distinction) — Manonmaniam Sundaranar University, 2001  
+
+Certifications: PMP (No. 1589891) · CKA (LF-usd00s15hg)  
+AWARDS
+Client Obsession Award (CIO) — Recognized for stakeholder impact and delivery excellence.  
+OPTIONAL SECTIONS (ADD IF RELEVANT)
+Publications/Open Source: [Add OSS contributions, papers, talks]
+Security/Compliance: Experience aligning with policy, risk management, and audit readiness for production ML systems.
+How this aligns to the Citi JD
+GenAI focus: LLMs, prompt engineering, RAG, agentic systems, model fine-tuning.
+End-to-end delivery: Data ingestion → feature engineering → model training/eval → containerized deployment → monitoring.
+Tooling: Python, PyTorch/TensorFlow, Docker/Kubernetes/OpenShift, Git, LangChain, Hugging Face, MLflow/DVC.
+Enterprise rigor: Stakeholder comms, documentation, Responsible AI, risk awareness, and mentoring.
+
+
+
+                                                                 R. Aemunathan, PMP
+Dallas–Fort Worth, TX  |  aemunathan@gmail.com  |  +91-97890-11455  |  LinkedIn: [add URL]  |  GitHub: [add URL]
+SUMMARY
+Senior engineering leader with extensive experience in applications development, DevOps, and platform reliability. Currently pursuing an MS in Artificial Intelligence with hands-on coursework projects in NLP chatbots, sentiment analysis, retrieval-augmented generation (RAG), and supervised learning. Seeking to contribute at the intersection of applications development and GenAI, with a transparent roadmap for advanced topics marked as Yet to Learn (in progress).
+EDUCATION & CERTIFICATIONS
+M.S., Artificial Intelligence (in progress) — [University Name] | [City] | [YYYY–Present]
+MBA — Indira Gandhi National Open University (Distance), 2013
+B.E., Electrical & Electronics (Distinction) — Manonmaniam Sundaranar University, 2001
+Certifications: PMP (No. 1589891), CKA (LF-usd00s15hg)
+EXPERIENCE
+[Title Placeholder — e.g., Senior AI/ML Engineer / Applications Development Sr Lead] — [Company/Organization]
+Dec 2022 – Present | [City, State]
+This section is reserved for your most recent role. Replace placeholders with your employer and scope once finalized. Below bullets summarize the deliverables completed as part of MS in AI coursework projects (hands-on).
+MS IN AI — COURSEWORK PROJECTS (COMPLETED)
+Traditional Chatbot (Python, Microsoft Bot Framework)
+•	Built a rule-based/intent-driven chatbot in Python using the Microsoft Bot Framework.
+•	Implemented dialog flow, basic NLU intents, and fallback handling; authored a 5–7 page technical report.
+Chatbot Integration with Azure Cognitive Services (Sentiment Analysis)
+•	Integrated Azure Text Analytics Sentiment API into the chatbot to classify user messages in real time.
+•	Evaluated API outputs, recorded edge cases, and documented examples with screenshots and explanations.
+Titanic Survival Prediction — KNIME (Supervised Learning)
+•	Prepared data with imputation, encoding, and feature selection; trained Decision Tree and Logistic Regression models.
+•	Assessed performance using accuracy, precision, recall, and F1 score; discussed trade-offs and error analysis.
+Customer Churn Analysis — EDA and Dashboard (Zoho Analytics)
+•	Performed exploratory data analysis on customer data (cleaning, profiling, trend discovery).
+•	Built an interactive churn dashboard (KPIs, segments, drill-downs) and narrated insights for stakeholders.
+Legal Document Assistant (RAG) — POC (LangChain + FAISS + Gradio)
+•	Prototyped retrieval-augmented generation: chunked/embedded legal documents, built a vector index (FAISS),
+•	wired a Gradio front end for clause-level Q&A and summarization; experimented with prompt patterns and evaluation.
+AI/ML SKILLS — COMPLETED VIA COURSEWORK
+•	NLP basics for chatbots: intent patterns, dialog flow, sentiment analysis via Azure Cognitive Services.
+•	RAG fundamentals: document chunking, embeddings, vector search using FAISS, prompt iteration; basic evaluation of responses.
+•	Supervised ML: Decision Tree, Logistic Regression; metrics — accuracy, precision, recall, F1.
+•	Data work: cleaning, imputation, encoding, feature selection; dashboarding for insights (Zoho Analytics).
+•	Tools: Python (for chatbot + API integration), KNIME (visual ML), Gradio (simple UI for QA/summarization demos).
+YET TO LEARN (IN PROGRESS — COURSE ROADMAP)
+•	Deep Learning frameworks (PyTorch, TensorFlow, Keras) for training and fine-tuning.
+•	Parameter-efficient fine-tuning (LoRA/QLoRA) and advanced LLM adaptation techniques.
+•	Agentic AI systems (tool use, multi-step planners) beyond basic prompt flows.
+•	RAG at scale: hybrid search (sparse+dense), reranking, and production-grade evaluation.
+•	MLOps: experiment tracking (MLflow/DVC), model registry, CI/CD for ML, monitoring & drift detection.
+•	Model deployment patterns (Dockerized services, Kubernetes/OpenShift, autoscaling, inference optimizations).
+•	Generative AI frameworks & libraries (Hugging Face Transformers, LangChain/LlamaIndex) at production level.
+•	Cloud AI platforms and services beyond prototypes (AWS/GCP/Azure managed ML).
+•	Responsible AI practices: privacy-by-design, bias testing/mitigation, model interpretability documentation.
+PRIOR PROFESSIONAL EXPERIENCE (CONDENSED)
+VP, DevOps — Citi
+Sep 2019 – Nov 2022 | Chennai, India
+•	Led blue-green deployments and 24×7 testing to accelerate releases.
+•	Integrated telemetry/analytics to improve MTTR and reduce operational costs.
+•	Mentored cross-functional teams; drove platform reliability and automation.
+Delivery Manager, MVNO — Plintron
+May 2011 – Aug 2019 | Global
+•	Launched MVNO programs across regions; authored HLD/LLD; coordinated stakeholders.
+•	Delivered complex rollouts with PMI-aligned practices and continuous improvement.
+Junior Telecom Officer — BSNL (Zonal Data Centre)
+Jan 2003 – Jun 2011 | India
+•	Planned and installed UMTS network expansions; led acceptance testing and KPI benchmarking.
+•	Developed in-house solutions (e.g., fleet tracking, ATM connectivity) to reduce project costs.
+AWARDS
+Client Obsession Award (CIO) — Recognized for stakeholder impact and delivery excellence.
