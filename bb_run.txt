@@ -1,0 +1,6 @@
+export BITBUCKET_BASE_URL="https://bitbucket.yourcompany.com"
+export BITBUCKET_PROJECT_KEY="YOURPROJ"
+export BITBUCKET_TOKEN="xxxxx"          # or use BITBUCKET_USERNAME / BITBUCKET_PASSWORD
+export BITBUCKET_VERIFY_SSL="true"      # set "false" for self-signed
+export MAX_WORKERS="16"                 # optional
+python bb_branches_all.py
