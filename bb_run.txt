@@ -4,3 +4,54 @@ export BITBUCKET_TOKEN="xxxxx"          # or use BITBUCKET_USERNAME / BITBUCKET_
 export BITBUCKET_VERIFY_SSL="true"      # set "false" for self-signed
 export MAX_WORKERS="16"                 # optional
 python bb_branches_all.py
+
+
+export BITBUCKET_BASE_URL="https://bitbucket.yourcompany.com"
+export BITBUCKET_TOKEN="xxxxx"                            # or pass --username/--password
+# SSL options:
+#   --verify-ssl true            (default)
+#   --verify-ssl false           (skip verify; internal only)
+#   --verify-ssl /etc/ssl/certs/corp-ca.crt
+
+python harvest_bitbucket_branches.py \
+  --base-url "$BITBUCKET_BASE_URL" \
+  --token "$BITBUCKET_TOKEN" \
+  --verify-ssl true \
+  --project-file projects.txt \
+  --out-ndjson branches.ndjson \
+  --out-csv branches.csv \
+  --resume-file harvest_resume.txt \
+  --max-concurrent 32 \
+  --rps 10
+
+
+python -m venv .venv && source .venv/bin/activate
+pip install aiohttp async-timeout
+
+
+projects.txt
+COREBANK
+PAYMENTS
+FRAUD
+# ARCHIVE
+...
+
+Tuning tips
+Start with --max-concurrent 16 and --rps 6–10.
+If your Bitbucket is healthy, bump to --max-concurrent 48 and --rps 15–20.
+Watch server metrics and 429s. Back off if you see throttling.
+
+What you get
+branches.ndjson — one JSON object per branch (or a repo-level stub if no branches)
+branches.csv — same info in CSV
+harvest_resume.txt — lines of PROJECT/REPO_SLUG already processed; delete to full-rescan
+
+project_key,repo,repo_slug,branch,last_commit_hash,last_commit_author,last_commit_email,last_commit_date_utc,days_since_last_commit,is_default_branch
+
+{"project_key":"COREBANK","repo":"acct-ledger","repo_slug":"acct-ledger","branch":"","last_commit_hash":"","last_commit_author":"","last_commit_email":"","last_commit_date_utc":"","days_since_last_commit":"","is_default_branch":"no","has_branches":"no"}
+
+Operational safeguards
+Resume anytime: If the job stops, rerun with the same flags; processed repos are skipped via --resume-file.
+Timeouts: Each HTTP GET has a timeout and exponential backoff.
+Rate limit: Global RPS cap avoids overwhelming the server.
+Backpressure: The script self-throttles pending tasks to keep memory stable.
