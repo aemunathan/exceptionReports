@@ -1,0 +1,2130 @@
+#if ($allowedProjectKeys.contains($project.key) &&
+$issue.getIssueTypeObject().getName() == "Story")
+#set($currentUser = $req.remoteUser)
+#set($currentIssueStatus = $issue.getStatusObject().getName())
+<style>
+.description-score-custom-field {
+    font-family: 'Citi-Sans-Text-Regular';
+   color: #255BE3;
+    font-size: 16px;
+}
+#rowFor${scoreFieldKey}{
+display: none !important;
+}
+.custom-box{
+border: 1px solid #ccc;
+padding:10px;
+margin: 10px 0;
+border-radius: 5px;
+width: fit-content;
+box-sizing: content-box;
+ position: relative;
+}
+.custom-box-two{
+border: 1px solid #ccc;
+padding:10px;
+margin: 10px 0;
+border-radius: 5px;
+ position: relative;
+ min-width: 95% !important;
+}
+.custom-box-ai {
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(307deg, rgba(142, 49, 156, 0.10) 42.31%, #8E319C
+81.33%),
+     linear-gradient(53deg, rgba(198, 236, 199, 0.10) 35.61%, #1B636A
+84.06%),
+      linear-gradient(180deg, #DBEFFE 0.01%, #255BE3 73.37%);
+  padding: 10px;
+  margin: 10px 0;
+  min-width: 95% !important;
+  position: relative;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 7px 15px -5px;
+}
+#current-story-textarea,
+#current-story-textarea1,
+ #suggested-story-textarea,
+  #suggested-story-textarea1 {
+    min-height: 2.5em;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: hidden;
+    padding: 5px;
+    box-sizing: border-box;
+}
+.rqm-label {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background-color: white;
+  padding: 0 5px;
+  font-size: 1em;
+}
+.img-label {
+  position: absolute;
+  top: -28px;
+  right: -5px;
+}
+.box-bottom {
+  position: absolute;
+  bottom: -0.2px;
+  right: -2px;
+}
+#hello-world-inline-container {
+    border: 1px solid gray;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.progress-container {
+  display: flex;
+  height: 20px;
+  padding: 0 3px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: #FFF;
+  width: 97%;
+  color: #0F1632;
+  font-family: 'Citi Sans Mono', monospace;
+  font-weight: 400;
+  margin-bottom: 2px;
+  transition: border-color 0.5s ease;
+}
+.progress-bar {
+  height: 14px;
+  border-radius: 4px;
+  transition: width 0.5s ease, background-color 0.5s ease;
+}
+.red {
+  background: #C81E0D;
+}
+.yellow {
+  background: #FAB728;
+}
+.green {
+  background: #13892C;
+}
+/* Border color classes for the outer box */
+.border-red {
+  border-color: #C81E0D;
+}
+.border-yellow {
+  border-color: #FAB728;
+}
+.border-green {
+  border-color: #13892C;
+}
+#api-modal .aui-dialog2-content{
+height:1000px;
+}
+.collapsible-section summary .circle {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid #B23802;
+    text-align: center;
+    line-height: 18px;
+}
+ .collapsible-section[open] .arrow {
+        transform: rotate(90deg);
+        color: #0F1632;
+    }
+    .arrow {
+        transition: transform 0.3s ease;
+    }
+    .editable-div {
+    width: 90%;
+    height: auto !important;
+    border: none;
+    display: block;
+    padding: 0;
+    margin: 0;
+                                    }
+      .logo-container {
+      display: flex;
+      align-items: center;
+      font-size: 1.2em;
+      position: relative;
+    }
+    .logo-text {
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+    .logo-text .blue {
+      color: #255BE3;
+    }
+    .logo-icon {
+      font-size: 1.5em;
+      color: #A4ACAF;
+      transform: scaleX(-1);
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+      position: absolute;
+      left: 1.2em;
+      top:0.02em;
+    }
+.alert {
+  padding: 5px;
+  background-color: #F0F8FF;
+}
+.closebtn {
+  margin-left: 15px;
+  color: black;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.closebtn:hover {
+  color: black;
+}
+.my-custom-modal.aui-dialog2 {
+    width: 80vw !important;
+    max-width: 80vw !important;
+}
+.custom-tooltip {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 152%;
+    transform: translateY(-50%);
+    background-color: black;
+    color: white;
+    border: 1px solid #ddd;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    white-space: pre-wrap;
+    font-size: 0.9em;
+    border-radius: 8px;
+    width: 3000%;
+    max-width: 3000%;
+}
+.custom-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid black;
+}
+.custom-tooltip-button {
+    position: relative;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+}
+.custom-tooltip-button:hover .custom-tooltip {
+    display: block;
+}
+</style>
+<div class="custom-box" title="Use AI to enhance the quality of user
+stories.">
+<div class="rqm-label"><img id="scanr-label-img"
+src="https://scanr-py-gcb-nam-fdn-scanr-177048.apps.namgcbswd23u.ecs.dyn.nsroot.net/scanr-label"
+alt="Scanr label" style="height: 13px;"></div>
+<div class="description-score-custom-field" style="margin-top: 15px;">
+        <span id="no-score-text" style="color: gray;">Scanning Story...
+</span>
+        <div class="progress-container">
+                                      <div id="score-progress-bar"
+class="progress-bar"></div>
+                                      <span id="score-display"></span>
+                                    </div>
+    </div>
+    <div style="padding-top: 5px;">
+    <button class="button-gradient" role="button" id="show-popup">
+        <span class="text" style="font-size: 1.1em;">SCAN</span>
+    </button>
+</div>
+    <div id="hidden-description" style="display:none;"></div>
+</div>
+<script type="module">
+    AJS.toInit(function() {
+        jQuery(document).ready(function() {
+            console.log("[DEBUG] Initializing ScanR plugin");
+            initStuff();
+        });
+    });
+</script>
+<script type="text/javascript">
+                  var globalDescription = "";
+                  var globalAcceptanceCriteria = "";
+                  // Global attestation variables
+                  var attestationAccepted = false;
+                  var attestationChecked = false;
+                  var attestationModalLoaded = false;
+    async function initStuff() {
+        console.log("[DEBUG] Starting initStuff function");
+        var globalIssueKey = getIssueKey();
+        console.log("[DEBUG] Issue Key:", globalIssueKey);
+        try {
+            var globalFieldValues = await
+fetchCustomFieldValue(globalIssueKey);
+            globalDescription = globalFieldValues.description;
+            globalAcceptanceCriteria =
+globalFieldValues.acceptanceCriteria;
+            console.log("[DEBUG] Description loaded:", globalDescription
+? "Yes" : "No");
+            console.log("[DEBUG] Acceptance Criteria loaded:",
+globalAcceptanceCriteria ? "Yes" : "No");
+            var vaultResp = '$vaultResp';
+            var coinToken = '$genToken';
+            // Status check logic
+            (function() {
+                var disabledStatuses = ["Cancelled", "Done",
+"Validated", "Not Released", "Released","Closed"];
+                var currentStatus = "$currentIssueStatus";
+                console.log("[DEBUG] Current status:", currentStatus);
+                if (disabledStatuses.map(function(s){return
+s.toLowerCase();}).includes(currentStatus.toLowerCase())) {
+                    console.log("[DEBUG] Button disabled for status:",
+currentStatus);
+                    var btn = document.getElementById('show-popup');
+                    if (btn) {
+                        btn.setAttribute('disabled', 'disabled');
+                        btn.style.pointerEvents = 'none';
+                        btn.style.opacity = '0.6';
+                        var parentDiv =
+document.querySelector('.custom-box[title]');
+                        if (parentDiv) {
+                            parentDiv.setAttribute('title', 'Scan is
+disabled for the current issue Status.');
+                        }
+                    }
+                }
+            })();
+        } catch (error) {
+            console.error("[DEBUG] Error in initStuff:", error);
+        }
+        // Initialize attestation logic
+        initAttestationLogic();
+        // Initialize button click handler
+        initButtonClickHandler();
+    }
+    function getIssueKey() {
+        var url = window.location.href;
+        var issueKeyPattern = /browse\/([A-Z]+-\d+)/;
+        var match = url.match(issueKeyPattern);
+        if (match) {
+            return match[1];
+        }
+        var issueKeyElement = AJS.$("#key-val");
+        if (issueKeyElement.length) {
+            return issueKeyElement.text().trim();
+        }
+        var selectedIssueKey = AJS.$(".selected-issue-key").text();
+        if (selectedIssueKey) {
+            return selectedIssueKey.trim();
+        }
+        return null;
+    }
+    function updateScoreDisplay(score) {
+        var progressBar = AJS.$("#score-progress-bar");
+        var noScoreText = AJS.$("#no-score-text");
+        var progressContainer =
+AJS.$("#score-progress-bar").closest(".progress-container");
+        var scoreDisplay = AJS.$("#score-display");
+        if (score === null || score === "" || isNaN(score)) {
+            progressContainer.hide();
+            scoreDisplay.text("");
+            noScoreText.text("Click to check score");
+            progressContainer.removeClass("border-red border-yellow
+border-green");
+        } else {
+            noScoreText.text("");
+            progressBar.width(score + "%");
+            progressBar.show();
+            progressBar.removeClass("red yellow green");
+            progressContainer.removeClass("border-red border-yellow
+border-green");
+            if (score <= 40) {
+                progressBar.addClass("red");
+                progressContainer.addClass("border-red");
+            } else if (score > 40 && score <= 70) {
+                progressBar.addClass("yellow");
+                progressContainer.addClass("border-yellow");
+            } else {
+                progressBar.addClass("green");
+                progressContainer.addClass("border-green");
+            }
+            scoreDisplay.text(score + "%");
+        }
+    }
+    function fetchCustomFieldValue(issueKey) {
+        console.log("[DEBUG] Fetching data from custom Field ID: " +
+"$scoreFieldKey");
+        var jiraApiUrl = AJS.params.baseURL + "/rest/api/2/issue/" +
+issueKey;
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: jiraApiUrl,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var customFieldId = '$scoreFieldKey';
+                    var scoreValue = response.fields[customFieldId];
+                    var description = response.fields.description;
+                    var acceptanceCriteria =
+response.fields['$acceptanceCriteriaFieldKey'];
+                    if (scoreValue != null) {
+                        updateScoreDisplay(scoreValue);
+                        console.log("[DEBUG] Score value updated:",
+scoreValue);
+                    } else {
+                        updateScoreDisplay(null);
+                    }
+                    resolve({
+                        description: description,
+                        acceptanceCriteria: acceptanceCriteria
+                    });
+                },
+                error: function() {
+                    console.error("[DEBUG] Error fetching custom field
+data");
+                    reject("Error fetching data");
+                }
+            });
+        });
+    }
+    // AI Attestation Functions
+    function getCurrentUserName() {
+        if (AJS && AJS.params && AJS.params.remoteUser) {
+            return AJS.params.remoteUser;
+        }
+        if (typeof $currentUser !== 'undefined') {
+            return $currentUser;
+        }
+        // Fallback to fetch username from the Jira API
+        try {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", AJS.contextPath() + "/rest/api/2/myself",
+false); // Synchronous request
+            xhr.send();
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                return response.name; // Return the username from the
+response
+            } else {
+                console.error("Failed to fetch username from Jira API.
+Status:", xhr.status);
+            }
+        } catch (error) {
+            console.error("Error fetching username from Jira API:",
+error);
+        }
+        return null; // Return null if all methods fail
+    }
+    function getAttestationProperty(callback) {
+        var userName = getCurrentUserName();
+        console.log("[DEBUG] Getting attestation for user:", userName);
+        if (!userName) {
+            console.log("[DEBUG] No username found");
+            callback(null);
+            return;
+        }
+        // Try to get from user properties first
+        jQuery.ajax({
+            url: AJS.params.baseURL +
+"/rest/api/2/user/properties/com.citi.scanr.attestation?username=" +
+encodeURIComponent(userName),
+            type: 'GET',
+            dataType: 'json',
+            success: function(resp) {
+                console.log("[DEBUG] Attestation property retrieved from
+API:", resp.value);
+                callback(resp.value);
+            },
+            error: function(xhr, status, error) {
+                console.log("[DEBUG] Error getting attestation property
+from API, trying localStorage:", status, error);
+                // Fallback to localStorage
+                try {
+                    var storageKey = "com.citi.scanr.attestation." +
+userName;
+                    var storedData = localStorage.getItem(storageKey);
+                    if (storedData) {
+                        var parsedData = JSON.parse(storedData);
+                        console.log("[DEBUG] Attestation property
+retrieved from localStorage:", parsedData);
+                        callback(parsedData);
+                    } else {
+                        console.log("[DEBUG] No attestation found in
+localStorage");
+                        callback(null);
+                    }
+                } catch (storageError) {
+                    console.log("[DEBUG] Error getting attestation
+property from localStorage:", storageError);
+                    callback(null);
+                }
+            }
+        });
+    }
+    function setAttestationProperty(data, callback) {
+        var userName = getCurrentUserName();
+        console.log("[DEBUG] Setting attestation for user:", userName);
+        if (!userName) {
+            console.log("[DEBUG] No username for setting attestation");
+            var errorMessage = 'Failed to save attestation. User session
+may be inactive or expired. Please refresh the page and try again.';
+            alert(errorMessage);
+            callback(false);
+            return;
+        }
+        // Try to save to user properties, but if it fails, use
+localStorage as fallback
+        jQuery.ajax({
+            url: AJS.params.baseURL +
+"/rest/api/2/user/properties/com.citi.scanr.attestation?username=" +
+encodeURIComponent(userName),
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function() {
+                console.log("[DEBUG] Attestation property set
+successfully via API");
+                callback(true);
+            },
+            error: function(xhr, status, error) {
+                console.log("[DEBUG] Error setting attestation property
+via API:", status, error);
+                // Check if it's a session/auth error
+                if (xhr.status === 401 || xhr.status === 403) {
+                    var errorMessage = 'Failed to save attestation. User
+session may be inactive or expired. Please refresh the page and try
+again.';
+                    alert(errorMessage);
+                    callback(false);
+                    return;
+                }
+                // Fallback to localStorage
+                try {
+                    var storageKey = "com.citi.scanr.attestation." +
+userName;
+                    localStorage.setItem(storageKey,
+JSON.stringify(data));
+                    console.log("[DEBUG] Attestation property set
+successfully via localStorage");
+                    callback(true);
+                } catch (storageError) {
+                    console.log("[DEBUG] Error setting attestation
+property via localStorage:", storageError);
+                    var errorMessage = 'Failed to save attestation.
+Please try again.';
+                    alert(errorMessage);
+                    callback(false);
+                }
+            }
+        });
+    }
+    function isAttestationValid(attestation) {
+        var POLICY_VERSION = "v1";
+        var ATTESTATION_VALID_DAYS = 7;
+        if (!attestation || !attestation.acceptedTime ||
+!attestation.policyVersion) {
+            console.log("[DEBUG] Attestation invalid - missing data");
+            return false;
+        }
+        if (attestation.policyVersion !== POLICY_VERSION) {
+            console.log("[DEBUG] Attestation invalid - wrong policy
+version");
+            return false;
+        }
+        var accepted = new Date(attestation.acceptedTime);
+        var now = new Date();
+        var diffDays = (now - accepted) / (1000 * 60 * 60 * 24);
+        var isValid = diffDays < ATTESTATION_VALID_DAYS;
+        console.log("[DEBUG] Attestation validity:", isValid, "Days
+since acceptance:", diffDays);
+        return isValid;
+    }
+    function showAttestationModal(onAccept, onCancel) {
+        console.log("[DEBUG] Showing attestation modal");
+        // Clear any existing modal states first
+        cleanupExistingModals();
+        var existingModal = jQuery('#ai-attestation-modal');
+        if (existingModal.length > 0) {
+            console.log("[DEBUG] Using existing attestation modal");
+            // Ensure modal is properly reset
+            existingModal.attr('aria-hidden', 'false');
+            existingModal.removeAttr('data-aui-focus');
+            existingModal.removeAttr('data-aui-blanketed');
+            // Use AJS dialog2 for proper modal handling
+            var dialog = AJS.dialog2(existingModal);
+            // Bind events before showing
+            bindAttestationModal(onAccept, onCancel);
+            // Show the modal using AJS with proper state management
+            dialog.show();
+            // Force proper modal state
+            setTimeout(function() {
+                existingModal.attr('aria-hidden', 'false');
+                existingModal.css({
+                    'z-index': '3000',
+                    'display': 'block',
+                    'pointer-events': 'auto'
+                });
+                // Ensure focus is properly set
+                existingModal.focus();
+            }, 100);
+        } else {
+            console.error("[DEBUG] Attestation modal template not
+found");
+            alert('Attestation modal not available. Please contact the
+administrator.');
+            if (onCancel) onCancel();
+        }
+    }
+    function cleanupExistingModals() {
+        console.log("[DEBUG] Cleaning up existing modals");
+        // Remove any orphaned blankets or modal states
+        jQuery('.aui-blanket').each(function() {
+            var blanket = jQuery(this);
+            if (!blanket.siblings('.aui-dialog2:visible').length) {
+                blanket.remove();
+            }
+        });
+        // Reset any modals with corrupted states
+        jQuery('.aui-dialog2').each(function() {
+            var modal = jQuery(this);
+            if (modal.attr('aria-hidden') === 'true' &&
+modal.is(':visible')) {
+                console.log("[DEBUG] Found corrupted modal, resetting:",
+modal.attr('id'));
+                modal.attr('aria-hidden', 'false');
+                modal.removeAttr('data-aui-focus');
+                modal.removeAttr('data-aui-blanketed');
+            }
+        });
+        // Clear any focus traps
+        if (document.activeElement && document.activeElement.classList
+&&
+            document.activeElement.classList.contains('aui-dialog2')) {
+            document.activeElement.blur();
+            document.body.focus();
+        }
+    }
+    function bindAttestationModal(onAccept, onCancel) {
+        console.log("[DEBUG] Binding attestation modal events");
+        // Remove any existing event handlers to prevent duplicates
+        jQuery('#ai-attestation-accept').off('click');
+        jQuery('#ai-attestation-cancel').off('click');
+        jQuery('#ai-attestation-checkbox').off('change');
+        // Enable/disable button based on checkbox with immediate UI
+feedback
+        jQuery('#ai-attestation-checkbox').on('change', function() {
+            var isChecked = jQuery(this).is(':checked');
+            var button = jQuery('#ai-attestation-accept');
+            button.prop('disabled', !isChecked);
+            // Force button visibility and state update
+            if (isChecked) {
+                button.removeClass('aui-button-disabled').show();
+                console.log("[DEBUG] Button enabled and shown");
+            } else {
+                button.addClass('aui-button-disabled');
+                console.log("[DEBUG] Button disabled");
+            }
+        });
+        // Bind accept button
+        jQuery('#ai-attestation-accept').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!jQuery('#ai-attestation-checkbox').is(':checked')) {
+                console.log("[DEBUG] Checkbox not checked, ignoring
+click");
+                return false;
+            }
+            console.log("[DEBUG] Attestation accepted");
+            var data = { acceptedTime: new Date().toISOString(),
+policyVersion: "v1" };
+            setAttestationProperty(data, function(success) {
+                if (success) {
+                    console.log("[DEBUG] Attestation saved successfully,
+hiding modal");
+                    var dialog = AJS.dialog2('#ai-attestation-modal');
+                    dialog.hide();
+                    attestationAccepted = true;
+                    if (onAccept) onAccept();
+                } else {
+                    alert('Failed to save attestation. Please try
+again.');
+                }
+            });
+            return false;
+        });
+        // Bind cancel button if it exists
+        jQuery('#ai-attestation-cancel').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("[DEBUG] Attestation cancelled");
+            var dialog = AJS.dialog2('#ai-attestation-modal');
+            dialog.hide();
+            if (onCancel) onCancel();
+            return false;
+        });
+        // Handle modal close via header close button
+        jQuery('#ai-attestation-modal
+.aui-dialog2-header-close').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("[DEBUG] Attestation modal closed via header");
+            var dialog = AJS.dialog2('#ai-attestation-modal');
+            dialog.hide();
+            if (onCancel) onCancel();
+            return false;
+        });
+    }
+    function initAttestationLogic() {
+        console.log("[DEBUG] Initializing attestation logic");
+        // Attestation logic is now properly contained within functions
+    }
+    function initButtonClickHandler() {
+        console.log("[DEBUG] Initializing button click handler");
+        if (AJS.$("#show-popup").length &&
+!AJS.$("#show-popup").data('events-attached')) {
+            console.log("[DEBUG] Attaching click event to show-popup
+button");
+            AJS.$("#show-popup").click(function(e) {
+                console.log("[DEBUG] Show popup button clicked");
+                e.preventDefault();
+                getAttestationProperty(function(attestation) {
+                    attestationChecked = true;
+                    if (isAttestationValid(attestation)) {
+                        console.log("[DEBUG] Valid attestation found,
+proceeding with scan");
+                        attestationAccepted = true;
+                        proceedWithScan();
+                    } else {
+                        console.log("[DEBUG] No valid attestation,
+showing modal");
+                        showAttestationModal(proceedWithScan,
+function(){
+                            console.log("[DEBUG] Attestation cancelled
+by user");
+                        });
+                    }
+                });
+                return false;
+            });
+            AJS.$("#show-popup").data('events-attached', true);
+        }
+    }
+    function proceedWithScan() {
+        console.log("[DEBUG] Proceeding with scan functionality");
+        var issueKey = getIssueKey();
+        if (!issueKey) {
+            console.error("[DEBUG] Issue key not found");
+            var modalId = createAndManageModal("errorModal", "<p
+style='color: red; font: Citi-Sans-Text-Regular;'>Error: Issue key not
+found in the url.</p>");
+            AJS.$("#" + modalId + "-download-button").hide();
+            return;
+        }
+        var description = globalDescription;
+        var acceptanceCriteria = globalAcceptanceCriteria;
+        if ((!description || !description.trim()) &&
+(!globalAcceptanceCriteria || !globalAcceptanceCriteria.trim())) {
+            console.log("[DEBUG] No description or acceptance
+criteria");
+            var modalId = createAndManageModal("errorModal", "<p
+style='color: red; font: Citi-Sans-Text-Regular;'>Error: Description and
+Acceptance Criteria is not provided in the issue.</p>");
+            AJS.$("#" + modalId + "-download-button").hide();
+            return;
+        }
+        if (!description || !description.trim()) {
+            description = "";
+        }
+        if(!globalAcceptanceCriteria ||
+!globalAcceptanceCriteria.trim()){
+            globalAcceptanceCriteria = "";
+        }
+        var initialContent =
+            '<div style="margin-left: 30%;">' +
+            '<img
+src="https://scanr-py-gcb-nam-fdn-scanr-177048.apps.namgcbswd23u.ecs.dyn.nsroot.net/scanrloadscr?t=' +
+new Date().getTime() + '" alt="ScanrLoading" style="height: 120px; ">' +
+            '</div>';
+        var myModalId = createAndManageModal("myCustomModal",
+initialContent);
+        var msgEl = document.getElementById(myModalId + '-message-container');
+        if (msgEl) { msgEl.style.display = "block"; }
+        var payload = JSON.stringify({
+            user_story: description === null? "null" : description,
+            acceptance_criteria: acceptanceCriteria === null? "null" :
+acceptanceCriteria,
+            action: "new"
+        });
+        var apiUrl = '$rqmUrl';
+        var encAuthHeader = '$encAuthHeader';
+        console.log("[DEBUG] Sending API request to:", apiUrl);
+        jQuery.ajax({
+            url: apiUrl,
+            type: 'POST',
+            contentType: 'application/json',
+            headers:{
+                "soeid" : '$user.Username',
+                "Authorization": encAuthHeader
+            },
+            data: payload,
+            timeout: 150000,
+            success: function(apiResponse) {
+                console.log("[DEBUG] API response received
+successfully");
+               
+var msgEl2 = document.getElementById(myModalId + '-message-container');
+                if (msgEl2) { msgEl2.style.display = \"none\"; }
+                handleApiResponse(apiResponse, myModalId);
+            },
+            error: function(xhr, status, error) {
+                console.error("[DEBUG] API call failed:", status,
+error);
+               
+var msgEl3 = document.getElementById(myModalId + '-message-container');
+                if (msgEl3) { msgEl3.style.display = \"none\"; }
+                handleApiError(xhr, myModalId);
+            }
+        });
+    }
+    function createAndManageModal(modalId, contentHtml) {
+        console.log("[DEBUG] Creating modal with ID:", modalId);
+
+        // Defensive cleanup: remove any existing instance of this modal + orphan blankets
+        if (typeof cleanupExistingModals === "function") {
+            cleanupExistingModals();
+        }
+        AJS.$("#" + modalId).remove();
+        AJS.$(".aui-blanket").each(function() {
+            var blanket = AJS.$(this);
+            if (!blanket.siblings(".aui-dialog2:visible").length) {
+                blanket.remove();
+            }
+        });
+
+        var modalHtml = `
+            <div id="${modalId}" class="aui-dialog2 aui-dialog2-large my-custom-modal"
+                 role="dialog" aria-hidden="true" data-aui-modal="true" data-aui-remove-on-hide="true" tabindex="-1">
+                <header class="aui-dialog2-header">
+                    <h2 class="aui-dialog2-header-main">ScanR Results</h2>
+                    <a class="aui-dialog2-header-close">
+                        <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
+                    </a>
+                </header>
+                <div class="aui-dialog2-content">
+                     <div id="${modalId}-content">${contentHtml}</div>
+                </div>
+                <footer class="aui-dialog2-footer">
+                  <div id="${modalId}-message-container" style="position: absolute; bottom: 10px; left: 0; width: 100%;
+                        text-align: left; color: #0052CC; display: none; word-wrap: break-word; padding: 5px 0;
+                        box-sizing: border-box;"></div>
+                    <div class="aui-dialog2-footer-actions">
+                    <button id="${modalId}-download-button" class="aui-button">
+                            <span class="aui-icon aui-icon-small aui-iconfont-download"></span> Download Report
+                        </button>
+                       <button id="${modalId}-close-button" class="aui-button aui-button-primary">Close</button>
+                    </div>
+                </footer>
+            </div>
+        `;
+
+        AJS.$("body").append(modalHtml);
+
+        var dialog = AJS.dialog2("#" + modalId);
+
+        // Ensure cleanup happens no matter how the dialog is closed (ESC, header close, programmatic, etc.)
+        var cleanup = function() {
+            console.log("[DEBUG] Cleaning up modal:", modalId);
+            AJS.$("#" + modalId).off(".scanr");
+            AJS.$("#" + modalId).remove();
+            // Remove any orphaned blankets
+            AJS.$(".aui-blanket").each(function() {
+                var blanket = AJS.$(this);
+                if (!blanket.siblings(".aui-dialog2:visible").length) {
+                    blanket.remove();
+                }
+            });
+        };
+
+        AJS.$("#" + modalId).on("aui-dialog2-hide.scanr hide.scanr", cleanup);
+
+        // Wire close buttons
+        AJS.$("#" + modalId + "-close-button, #" + modalId + " .aui-dialog2-header-close")
+            .off("click.scanr")
+            .on("click.scanr", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("[DEBUG] Closing modal:", modalId);
+                dialog.hide();
+                return false;
+            });
+
+        dialog.show();
+
+        // Prevent blanket click from closing the dialog (avoids "blank white box" / orphan modal state)
+        setTimeout(function() {
+            var blanket = AJS.$(".aui-blanket").last();
+            blanket.off("click.scanr").on("click.scanr", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            });
+            // Focus the dialog for accessibility and to avoid focus traps on the page
+            AJS.$("#" + modalId).focus();
+        }, 0);
+
+        return modalId;
+    }
+    function handleApiResponse(apiResponse, modalId) {
+        console.log("[DEBUG] Handling API response");
+        var cscore = apiResponse.Cscore;
+        var suggestedDescription =
+apiResponse.Description.corrected_description.trim();
+        var suggestedAcceptanceCriteria =
+apiResponse.AcceptanceCriteria.corrected_acceptance_criteria;
+        if(suggestedAcceptanceCriteria){
+            suggestedAcceptanceCriteria =
+suggestedAcceptanceCriteria.replace(/\n/g,"<br>").trim();
+        }
+        var descscore = apiResponse.score_desc;
+        var acscore = apiResponse.score_acceptance;
+        console.log("[DEBUG] SuggestedAcceptanceCriteria:",
+suggestedAcceptanceCriteria);
+        var descRuleSummary = apiResponse.Description.summary;
+        var acRuleSummary = apiResponse.AcceptanceCriteria.summary;
+        var descRuleMap = new Map();
+        apiResponse.Description.analysis.forEach(rule => {
+            descRuleMap.set(rule.criterion, rule.value);
+        });
+        var rules = Object.fromEntries(descRuleMap);
+        var rulesCount = Object.keys(rules).length;
+        var passedCount = Object.values(rules).filter(value =>
+value).length;
+        var tableRows = "";
+        for (var rule of Object.keys(rules)) {
+            var status = rules[rule] ? "Passed" : "Failed";
+            var reason = apiResponse.Description.analysis.find(r =>
+r.criterion === rule)?.reason || " ";
+            tableRows += `
+                <tr>
+                    <td style="border: 1px solid #ddd; padding:
+8px;">${rule}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">
+                    <div style="display: flex; justify-content:
+space-between;">
+                    ${status}
+                    <button class="custom-tooltip-button"
+style="margin-right: 66%">
+                    <span class="aui-icon aui-icon-small
+aui-iconfont-info-filled"></span>
+                    <div class="custom-tooltip">${reason}
+                    </div>
+                </button>
+                    </div>
+                    </td>
+                    <td style="border: 1px solid #ddd; padding: 8px;"><a
+href="https://cedt-gct-confluence.nam.nsroot.net/confluence/display/EEE/Description+Rules"
+target="_blank">${rule}</a></td>
+                </tr>
+            `;
+        }
+        var accRuleMap = new Map();
+        apiResponse.AcceptanceCriteria.analysis.forEach(rule => {
+            accRuleMap.set(rule.criterion, rule.value);
+        });
+        var Acceptance_Criteria_rules = Object.fromEntries(accRuleMap);
+        var Acceptance_Criteria_rulesCount =
+Object.keys(Acceptance_Criteria_rules).length;
+        var Acceptance_Criteria_passedCount =
+Object.values(Acceptance_Criteria_rules).filter(value => value).length;
+        var Acceptance_Criteria_tableRows = "";
+        for (var rule of Object.keys(Acceptance_Criteria_rules)) {
+            var status = Acceptance_Criteria_rules[rule] ? "Passed" :
+"Failed";
+            var reason = apiResponse.AcceptanceCriteria.analysis.find(r
+=> r.criterion === rule)?.reason || " ";
+            Acceptance_Criteria_tableRows += `
+                <tr>
+                    <td style="border: 1px solid #ddd; padding:
+8px;">${rule}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">
+                    <div style="display: flex; justify-content:
+space-between;">
+                    ${status}
+                    <button class="custom-tooltip-button"
+style="margin-right: 56%">
+                    <span class="aui-icon aui-icon-small
+aui-iconfont-info-filled"></span>
+                    <div class="custom-tooltip">${reason}
+                    </div>
+                </button>
+                    </div>
+                    </td>
+                    <td style="border: 1px solid #ddd; padding:
+8px;" ><a
+href="https://cedt-gct-confluence.nam.nsroot.net/confluence/display/EEE/Acceptance+Rules"
+target="_blank">${rule}</a></td>
+                </tr>
+            `;
+        }
+        var progressBarClass = "";
+          if (cscore <= 40) {
+            progressBarClass = "red";
+          } else if (cscore > 40 && cscore <= 70) {
+            progressBarClass = "yellow";
+          } else {
+            progressBarClass = "green";
+          }
+          var DescprogressBarClass = "";
+          if (descscore <= 40) {
+            DescprogressBarClass = "red";
+          } else if (descscore > 40 && descscore <= 70) {
+            DescprogressBarClass = "yellow";
+          } else {
+            DescprogressBarClass = "green";
+          }
+          var AcprogressBarClass = "";
+          if (acscore <= 40) {
+            AcprogressBarClass = "red";
+          } else if (acscore > 40 && acscore <= 70) {
+            AcprogressBarClass = "yellow";
+          } else {
+            AcprogressBarClass = "green";
+          }
+          // Check interaction of editable divs
+          var descInteracted = false;
+        var acInteracted = false;
+        var formattedData = `
+        <div style=" display: flex;">
+        <b>ScanR Score</b>
+          <div class="progress-container border-${progressBarClass}"
+style="width: 54%; margin-left: 20px; margin-right: auto;">
+              <div  class="progress-bar ${progressBarClass}"
+              style="width: ${cscore}%;"></div>
+              <span >${cscore}%</span>
+            </div>
+          </div>
+        <div>
+    <details class="collapsible-section" style="border-top: 1px solid
+lightgrey; border-bottom: 1px solid lightgrey; padding: 10px 0;">
+        <summary style=" cursor: pointer; list-style: none; display:
+flex; ">
+            <div >
+                <b>Description Rules Result &emsp;&emsp;&emsp;&emsp;</b>
+            </div>
+        <div class="progress-container border-${DescprogressBarClass}"
+style="width: 30%; ; margin-right: auto !important; margin-left: auto
+!important;">
+                      <div class="progress-bar ${DescprogressBarClass}"
+                      style="width: ${descscore}%;"></div>
+                      <span>${descscore}%</span>
+                    </div>
+            <div style="display: flex; align-items: center; margin-left:
+auto;">
+            <span style="color: #255BE3; text-decoration: underline;
+font-family: Citi Sans ; font-weight: 400;">
+            ${passedCount}  out of  ${rulesCount}
+Passed</span>&nbsp;&nbsp;
+            <span class="arrow" style="color: #A4ACAF; ">▶</span></div>
+        </summary>
+        <div class="alert">
+                  <span class="closebtn"
+onclick="this.parentElement.style.display='none';">&times;</span>
+                  <strong>Summary:</strong> ${descRuleSummary}
+                </div>
+                <p>
+    Visit <a
+href="https://cedt-gct-confluence.nam.nsroot.net/confluence/display/EEE/ScanR"
+        target="_blank">ScanR Confluence Documentation </a>for more
+information.
+        </p>
+                    <table style="width: 100%; border-collapse:
+collapse; margin-top: 10px;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #ddd;
+padding: 8px; text-align: left;">Rule</th>
+                                <th style="border: 1px solid #ddd;
+padding: 8px; text-align: left;">Status</th>
+                                <th style="border: 1px solid #ddd;
+padding: 8px; text-align: left;">Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </details>
+            </div>
+        <details class="collapsible-section" style="border-top: 1px
+solid lightgrey; border-bottom: 1px solid lightgrey; padding: 10px 0;">
+                <summary style=" cursor: pointer; list-style: none;
+display: flex;">
+                    <div>
+                        <b>Acceptance Criteria Rules Results </b>
+                    </div>
+                <div id="newAC" class="progress-container
+border-${AcprogressBarClass}" style="width: 30%; margin-right: auto
+!important; margin-left: auto !important;">
+                              <div  class="progress-bar
+${AcprogressBarClass}"
+                              style="width: ${acscore}%;"></div>
+                              <span >${acscore}%</span>
+                            </div>
+                    <div style="display: flex; align-items: center;
+margin-left: auto;">
+                    <span style="color: #255BE3; text-decoration:
+underline; font-family: Citi Sans ; font-weight: 400;">
+                    ${Acceptance_Criteria_passedCount}  out of  
+${Acceptance_Criteria_rulesCount}  Passed </span>&nbsp;&nbsp;
+                    <span class="arrow" style="color: #A4ACAF;
+">▶</span></div>
+                </summary>
+               <div class="alert">
+                          <span class="closebtn"
+onclick="this.parentElement.style.display='none';">&times;</span>
+                          <strong>Summary:</strong> ${acRuleSummary}
+                        </div>
+                <table style="width: 100%; border-collapse: collapse;
+margin-top: 10px;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid #ddd; padding:
+8px; text-align: left;">Rule</th>
+                            <th style="border: 1px solid #ddd; padding:
+8px; text-align: left;">Status</th>
+                            <th style="border: 1px solid #ddd; padding:
+8px; text-align: left;">Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            ${Acceptance_Criteria_tableRows}
+                        </tbody>
+                </table>
+            </details>
+        </div>
+        <div class="alert">
+          <span class="closebtn"
+onclick="this.parentElement.style.display='none';">&times;</span>
+          <strong>Disclaimer:</strong>  This is a Generative AI based
+tool—it can make mistakes. Confirm accuracy of output before any uses.
+        </div>
+            <div style="display: flex; justify-content: space-between;
+margin-top: 30px;">
+            <div style="flex: 1; padding-right: 10px; max-width: 49%;">
+                <div class="custom-box-two">
+                    <span class="rqm-label"><b>Current
+Description</b></span>
+                    <div id="current-story-textarea" style="min-height:
+2.5em; white-space: pre-wrap; overflow-y:
+auto;">${globalDescription}</div>
+                </div>
+            </div>
+            <div style="flex: 1; padding-left: 10px; max-width: 49%;">
+                <div class="custom-box-ai">
+                <img class="img-label"
+src="https://scanr-py-gcb-nam-fdn-scanr-177048.apps.namgcbswd23u.ecs.dyn.nsroot.net/scanr-ai"
+alt="Ai logo" style="height: 25px;">
+                    <span class="rqm-label"><b>Suggested
+Description</b></span>
+                    <div id="suggested-story-textarea"
+class="editable-div"contenteditable="true" style="width: 100%;
+padding-bottom: 1em;">${suggestedDescription}</div>
+                </div>
+                <div style="font-family: Citi Sans ; font-weight: 400;
+color: gray;"> &nbsp; &nbsp; You can always edit this AI Generated
+Suggestion </div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-between;
+margin-top: 30px;">
+            <div style="flex: 1; padding-right: 10px; max-width: 49%;">
+                <div class="custom-box-two">
+                    <span class="rqm-label"><b>Current Acceptance
+Criteria</b></span>
+                    <div id="current-story-textarea1" style="min-height:
+2.5em; white-space: pre-wrap; overflow-y:
+auto;">${globalAcceptanceCriteria}</div>
+                </div>
+            </div>
+            <div style="flex: 1; padding-left: 10px; max-width: 49%;">
+                <div class="custom-box-ai">
+                <img class="img-label"
+src="https://scanr-py-gcb-nam-fdn-scanr-177048.apps.namgcbswd23u.ecs.dyn.nsroot.net/scanr-ai"
+alt="Ai logo" style="height: 25px;">
+                    <span class="rqm-label"><b>Suggested Acceptance
+Criteria</b></span>
+                    <div id="suggested-story-textarea1"
+class="editable-div" contenteditable="true" style="width: 100%;
+padding-bottom: 1em; ">
+                        ${suggestedAcceptanceCriteria}
+                    </div>
+                </div>
+                <div style="font-family: Citi Sans ; font-weight: 400;
+color: gray;"> &nbsp; &nbsp; You can always edit this AI Generated
+Suggestion </div>
+            </div>
+        </div>
+           <div style="margin-top: 10px; display: flex; align-items:
+center; justify-content: space-between;">
+            <div>
+                 <label>
+                    <input type="checkbox" class="checkbox"
+id="update-desc"><B> UPDATE DESCRIPTION</b>
+                </label>&nbsp;|&nbsp;
+                <label>
+                    <input type="checkbox" class="checkbox"
+id="update-ac"> <B>UPDATE ACCEPTANCE CRITERIA</B>
+                </label>
+            </div>
+            <div>
+                <button class="aui-button" id="accept-suggested-story">
+                    <span class="aui-icon aui-icon-small
+aui-iconfont-approve"></span> Accept
+                </button>
+            </div>
+        </div>
+        `;
+        function makeDivEditable(selector) {
+            const element = AJS.$(selector);
+            if (element.length) {
+                element.on('keydown keypress', function(e) {
+                    e.stopPropagation();
+                });
+                element.on('focus', function() {
+                    if (window.JIRA && JIRA.KeyboardShortcut) {
+                        JIRA.KeyboardShortcut.disable();
+                    }
+                });
+                element.on('blur', function() {
+                    if (window.JIRA && JIRA.KeyboardShortcut) {
+                        JIRA.KeyboardShortcut.enable();
+                    }
+                });
+            }
+        }
+        AJS.$("#" + modalId + "-content").html(formattedData);
+        makeDivEditable('#suggested-story-textarea');
+        makeDivEditable('#suggested-story-textarea1');
+        var newDescription = suggestedDescription;
+        var newAcceptance_Criteria = suggestedAcceptanceCriteria;
+        if(newAcceptance_Criteria){
+            newAcceptance_Criteria =
+newAcceptance_Criteria.replace(/<br\s*\/?>/gi, '\n');
+        }
+        var noSuggDescFlag = false;
+        var noSuggACFlag = false;
+        if((newAcceptance_Criteria == "undefined") ||
+!newAcceptance_Criteria ||
+         !newAcceptance_Criteria.trim() || newAcceptance_Criteria ==
+"null"){
+            const checkbox = document.getElementById('update-ac');
+                checkbox.setAttribute('disabled','true');
+            AJS.$("#suggested-story-textarea1").text("No Suggested
+Acceptance Criteria.");
+            noSuggACFlag = true;
+        }
+        if (globalAcceptanceCriteria == null ||
+!globalAcceptanceCriteria){
+            AJS.$("#current-story-textarea1").text("No Acceptance
+Criteria in Story.");
+        }
+        if((newDescription == "null") || !newDescription ||
+!newDescription.trim()){
+            const checkbox = document.getElementById('update-desc');
+                checkbox.setAttribute('disabled','true');
+                if (globalDescription == null){
+                AJS.$("#current-story-textarea").text("No Description in
+Story.");
+                }
+                AJS.$("#suggested-story-textarea").text("No Suggested
+Description.");
+                noSuggDescFlag = true;
+        }
+        AJS.$("#suggested-story-textarea").on("focus input", function()
+{
+            descInteracted = true;
+            console.log("[DEBUG] Description interacted:",
+descInteracted);
+        });
+        AJS.$("#suggested-story-textarea1").on("focus input", function()
+{
+            acInteracted = true;
+            console.log("[DEBUG] Acceptance Criteria interacted:",
+acInteracted);
+        });
+        AJS.$("#accept-suggested-story").on("click", async function() {
+            var updateAC = AJS.$("#update-ac").prop("checked");
+            var updateDesc = AJS.$("#update-desc").prop("checked");
+            var newScore = 100;
+            if (!updateAC && !updateDesc) {
+                alert("Please select at least one field to update.");
+                return;
+            }
+            newDescription =
+$("#suggested-story-textarea").html().replace(/<br\s*\/?>/gi, '\n');
+            newAcceptance_Criteria =
+$("#suggested-story-textarea1").html().replace(/<br\s*\/?>/gi, '\n');
+             var newcsScoreFlag = false;
+             var newRefDescScore = 0;
+             var newRefACScore = 0;
+             var newcsScore = null;
+            if (descInteracted || acInteracted) {
+               
+var msgEl4 = document.getElementById(modalId + '-message-container');
+                if (msgEl4) {
+                    msgEl4.style.paddingLeft = "20px";
+                    msgEl4.style.display = "block";
+                }
+                var initialContentrn =
+                     '<div style="margin-left: 30%;">' +
+                        '<img
+src="https://scanr-py-gcb-nam-fdn-scanr-177048.apps.namgcbswd23u.ecs.dyn.nsroot.net/scanrloadscr?t=' +
+new Date().getTime() + '" alt="ScanrLoading" style="height: 120px; ">' +
+                     '</div>';
+                AJS.$("#" + modalId +
+"-content").html(initialContentrn);
+                            var newApiCallPayload = JSON.stringify({
+                                user_story: newDescription === null ?
+"null" : newDescription,
+                                acceptance_criteria:
+newAcceptance_Criteria === null ? "null" : newAcceptance_Criteria,
+                                action: "refresh"
+                            });
+                            try {
+                                const apiResponse = await jQuery.ajax({
+                                    url: '$rqmUrl',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    headers: {
+                                        "soeid": '$user.Username',
+                                        "Authorization":
+'$encAuthHeader'
+                                    },
+                                    data: newApiCallPayload,
+                                    timeout: 150000
+                                });
+                                console.log("[DEBUG] External API
+response received:", apiResponse);
+                                newcsScoreFlag = true;
+                                newcsScore = apiResponse.Cscore;
+                                newRefDescScore =
+apiResponse.score_desc;
+                                newRefACScore =
+apiResponse.score_acceptance;
+                                console.log("[DEBUG] New cscore from
+API:", newcsScore);
+                            } catch (error) {
+                                console.log("[DEBUG] Error in new API
+call:", error);
+                            }
+                        }
+                console.log("[DEBUG] Update Acceptance Criteria
+checked:", updateAC);
+                console.log("[DEBUG] Update Description checked:",
+updateDesc);
+                console.log("[DEBUG] New Description val:",
+newDescription);
+                console.log("[DEBUG] New Acceptance Criteria val:",
+newAcceptance_Criteria);
+            var jiraApiUrl = AJS.params.baseURL + "/rest/api/2/issue/" +
+getIssueKey();
+            var data = {
+                "fields": {}
+            };
+            console.log("[DEBUG] Current value of newcsScore:",
+newcsScore);
+            console.log("[DEBUG] Current value of newScore:", newScore);
+            if (updateDesc) {
+                data.fields.description = newDescription;
+                if(!updateAC && !noSuggACFlag){
+                    newScore = (100 + acscore)/2;
+                }
+            }
+            if (updateAC) {
+                data.fields["$acceptanceCriteriaFieldKey"] =
+newAcceptance_Criteria;
+                if(!updateDesc && !noSuggDescFlag){
+                    newScore = (100 + descscore)/2;
+                }
+            }
+            // API CALL score logic
+            if (newcsScoreFlag) {
+            newScore = newcsScore ;
+           if (updateDesc) {
+                if(!updateAC && !noSuggACFlag){
+                    newScore = (newRefDescScore + acscore)/2;
+                }
+            }
+            if (updateAC) {
+                data.fields["$acceptanceCriteriaFieldKey"] =
+newAcceptance_Criteria;
+                if(!updateDesc && !noSuggDescFlag){
+                    newScore = (newRefACScore + descscore)/2;
+                }
+            }
+            }
+                console.log("[DEBUG] NEW value of newcsScore:",
+newcsScore);
+            console.log("[DEBUG] NEW value of newScore:", newScore);
+            data.fields['$scoreFieldKey'] = newScore;
+            data.update = {
+                    "labels": [
+                        { "add": "SCANR" }
+                    ]
+                };
+            console.log("[DEBUG] Payload data:", JSON.stringify(data));
+            if (Object.keys(data.fields).length > 0) {
+                jQuery.ajax({
+                    url: jiraApiUrl,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function() {
+                        console.log("[DEBUG] FIELDS value updated
+successfully!");
+                        updateScoreDisplay(newScore);
+                        var fieldSelector = "#" +
+"$acceptanceCriteriaFieldKey" + "-val";
+                        if (updateDesc) {
+                           
+AJS.$("#description-val").text(newDescription);
+                        }
+                        if (updateAC) {
+                       
+AJS.$(fieldSelector).html(newAcceptance_Criteria.replace(/\n/g,"<br>"));
+                        }
+                      window.location.reload();
+                    },
+                    error: function() {
+                        console.log("[DEBUG] Error updating issue
+fields");
+                        alert("Error updating issue fields");
+                    }
+                });
+            }
+        });
+        var issueKey = getIssueKey();
+        var customFieldId = '$scoreFieldKey';
+        updateScoreDisplay(cscore);
+        AJS.$(".progress-container").show();
+        updateCustomFieldValue(issueKey, customFieldId, cscore);
+    }
+    function handleApiError(xhr, modalId) {
+        console.log("[DEBUG] Handling API error, status:", xhr.status);
+        if (xhr.status === 401) {
+            try {
+                var responseBody = JSON.parse(xhr.responseText);
+                if (responseBody.detail.error_subcode === 498) {
+                    AJS.$("#" + modalId + "-content").html("<p
+style='color: red; font: Citi-Sans-Text-Regular;'>Error: Plugin session
+has expired. Refreshing the page.</p>");
+                    window.location.reload();
+                } else {
+                    AJS.$("#" + modalId + "-content").html("<p
+style='color: red; font: Citi-Sans-Text-Regular;'>Error: Failed to
+authenticate. Something went wrong, please contact Jira admin.</p>");
+                }
+            } catch (parseError) {
+                AJS.$("#" + modalId + "-content").html("<p style='color:
+red; font: Citi-Sans-Text-Regular;'>Error: Failed to authenticate.
+Something went wrong, please contact Jira admin.</p>");
+            }
+        } else {
+            AJS.$("#" + modalId + "-content").html("<p style='color:
+red; font: Citi-Sans-Text-Regular;'>Error: Failed to fetch data.
+Something went wrong, please try again later.</p>");
+        }
+    }
+    // Initialize when ready
+    if (typeof jQuery != "undefined") {
+        jQuery(document).ready(function() {
+            console.log("[DEBUG] jQuery ready, initializing");
+            initStuff();
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log("[DEBUG] DOM ready, initializing");
+        initStuff();
+        JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function() {
+            console.log("[DEBUG] New content added, re-initializing");
+            initStuff();
+        });
+    });
+    function updateCustomFieldValue(issueKey, customFieldId, newValue) {
+        var jiraApiUrl = AJS.params.baseURL + "/rest/api/2/issue/" +
+issueKey;
+        var data = {
+            "fields": {}
+        };
+        data.fields[customFieldId] = newValue;
+        jQuery.ajax({
+            url: jiraApiUrl,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function() {
+                console.log("[DEBUG] Custom field value updated
+successfully!");
+            },
+            error: function() {
+                console.log("[DEBUG] Error updating custom field
+value");
+            }
+        });
+    }
+</script>
+#end
+#if ($project.key == "PLANVIEW" && $issue.getIssueTypeObject().getName()
+== "Test Plan")
+<style>
+.rqm-label {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background-color: white;
+  padding: 0 5px;
+  font-size: 1em;
+}
+.collapsible-section summary .circle {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid #B23802;
+    text-align: center;
+    line-height: 18px;
+}
+.collapsible-section[open] .arrow {
+    transform: rotate(90deg);
+    color: #0F1632;
+}
+.arrow {
+    transition: transform 0.3s ease;
+}
+.logo-container {
+    display: flex;
+    align-items: center;
+    font-size: 1.2em;
+    position: relative;
+}
+.logo-text {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+.logo-text .blue {
+    color: #255BE3;
+}
+.logo-icon {
+    font-size: 1.5em;
+    color: #A4ACAF;
+    transform: scaleX(-1);
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    position: absolute;
+    left: 1.2em;
+    top: 0.02em;
+}
+.editable-div {
+    width: 100%;
+    height: auto !important;
+    border: 1px solid #A4ACAF;
+    display: block;
+}
+.alert {
+    padding: 5px;
+    background-color: #F0F8FF;
+}
+.closebtn {
+    margin-left: 15px;
+    color: black;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.closebtn:hover {
+    color: black;
+}
+.my-customTer-modal.aui-dialog2 {
+    width: 80vw !important;
+    max-width: 80vw !important;
+}
+.custom-box-ai {
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(307deg, rgba(142, 49, 156, 0.10) 42.31%, #8E319C
+81.33%),
+     linear-gradient(53deg, rgba(198, 236, 199, 0.10) 35.61%, #1B636A
+84.06%),
+      linear-gradient(180deg, #DBEFFE 0.01%, #255BE3 73.37%);
+  padding: 10px;
+  margin: 10px 0;
+  min-width: 95% !important;
+  position: relative;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 7px 15px -5px;
+}
+.img-label {
+    position: absolute;
+    top: -28px;
+    right: -5px;
+}
+</style>
+<div class="custom-box">
+    <div class="rqm-label" style="font-family: Copperplate;">TEST EXIT
+REPORT</div>
+    <div style="padding-top: 5px;">
+        <button class="button-gradient" role="button" id="create-TER">
+            <span class="text">TER Assist</span>
+        </button>
+    </div>
+</div>
+<script type="module">
+    AJS.toInit(function() {
+        jQuery(document).ready(function() {
+            console.log("[DEBUG] Initializing TER functionality");
+            initStuffTER();
+        });
+    });
+</script>
+<script type="text/javascript">
+    var globalTestExitReport = { filename: "", url: "" };
+    var globalMitigationPlanAttachment = { filename: "", url: "" };
+    var globalExitReportSummary = "";
+    async function initStuffTER() {
+        console.log("[DEBUG] Starting TER initialization");
+        var globalIssueKey = getIssueKey();
+        console.log("[DEBUG] TER Issue Key:", globalIssueKey);
+        try {
+            var globalFieldValues = await
+fetchCustomFieldValue(globalIssueKey);
+            globalTestExitReport = globalFieldValues.test_exit_report ||
+{ filename: "", url: "" };
+            globalMitigationPlanAttachment =
+globalFieldValues.mitigation_plan_attachment || { filename: "", url: ""
+};
+            globalExitReportSummary =
+globalFieldValues.exit_report_summary;
+            console.log("[DEBUG] TER data loaded successfully");
+        } catch (error) {
+            console.error("[DEBUG] Error loading TER data:", error);
+        }
+        // Initialize TER button handler
+        initTERButtonHandler();
+    }
+    function initTERButtonHandler() {
+        if (AJS.$("#create-TER").length &&
+!AJS.$("#create-TER").data('events-attached')) {
+            console.log("[DEBUG] Attaching TER button handler");
+            AJS.$("#create-TER").click(function() {
+                console.log("[DEBUG] TER button clicked");
+                // TER functionality would be implemented here
+            });
+            AJS.$("#create-TER").data('events-attached', true);
+        }
+    }
+</script>
+#end
+## --- AI Attestation Modal (embedded content) ---
+<!-- AI Attestation Modal -->
+<div id="ai-attestation-modal" class="aui-dialog2 aui-dialog2-medium
+citi-ai-attestation" role="dialog" aria-hidden="true"
+style="display:none;">
+    <header class="aui-dialog2-header citi-ai-title">
+        <h2 class="aui-dialog2-header-main">Citi GenAI Attestation</h2>
+    </header>
+    <div class="aui-dialog2-content citi-ai-body">
+        <!-- Important -->
+        <div class="citi-ai-section">
+            <div class="citi-ai-icon">
+                <span class="citi-ai-icon-circle">!</span>
+            </div>
+            <div class="citi-ai-content">
+                <div class="citi-ai-heading">Important: Please Read
+Carefully</div>
+                <p class="citi-ai-text">
+                    The generated outputs are based on provided data and
+may not reflect human expert opinions. It may occasionally produce
+incorrect or biased content. Users are responsible for reviewing and
+validating output, ensuring compliance with policies and standards, and
+consulting qualified experts to verify accuracy before relying on
+generated outputs for decision-making.
+                </p>
+            </div>
+        </div>
+        <div class="citi-ai-divider"></div>
+        <!-- Data Submission Rules -->
+        <div class="citi-ai-section">
+            <div class="citi-ai-icon"><span
+class="citi-ai-icon-emoji">��</span></div>
+            <div class="citi-ai-content">
+                <div class="citi-ai-heading">Data Submission Rules</div>
+                <ul class="citi-ai-list">
+                    <li><b>Classifications Allowed:</b> Documents up to
+"Internal" only.</li>
+                    <li><b>Prohibited Data:</b> Avoid submitting
+Restricted, Sensitive, Sensitive PII, Confidential, Confidential PII,
+Material Non-Public Information (MNPI) and Confidential Supervisory
+Information (CSI) classified documents. If you are uncertain of the
+classification, please read the <a
+href="https://citi.hostedconnectedrisk.com/CitiCPD/react?page=O&CID=sid934984277&InstanceNo=643442&S=OVERVIEW"
+target="_blank" rel="noreferrer">information classification policy</a>
+and check with the document owner.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="citi-ai-divider"></div>
+        <!-- Compliance and monitoring -->
+        <div class="citi-ai-section">
+            <div class="citi-ai-icon"><span
+class="citi-ai-icon-emoji">❓</span></div>
+            <div class="citi-ai-content">
+                <div class="citi-ai-heading">Compliance and
+monitoring</div>
+                <ul class="citi-ai-list">
+                    <li>All actions are monitored via the LLM gateway,
+R2D2</li>
+                    <li>Please read the <a
+href="https://citi.hostedconnectedrisk.com/CitiCPD/react?page=O&CID=sid934984277&InstanceNo=642679&S=OVERVIEW"
+target="_blank" rel="noreferrer">escalation policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <footer class="aui-dialog2-footer citi-ai-footer">
+        <div class="aui-dialog2-footer-actions">
+            <label class="citi-ai-checkbox-row"
+for="ai-attestation-checkbox">
+                <input type="checkbox" id="ai-attestation-checkbox" />
+                <span>By clicking, I confirm my understanding and agree
+to follow these guidelines.</span>
+            </label>
+            <button id="ai-attestation-accept" class="aui-button
+aui-button-primary citi-ai-btn" disabled>Let's begin</button>
+        </div>
+    </footer>
+</div>
+<style>
+/* Improved AI Attestation Modal Styles - Fixed for Jira Integration */
+#ai-attestation-modal.aui-dialog2 {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    max-width: 650px !important;
+    width: 85vw !important;
+    max-height: 85vh !important;
+    border: 1px solid #ddd;
+    z-index: 3000 !important;
+    margin: 0 !important;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+sans-serif !important;
+}
+/* Remove custom backdrop - let AJS handle it */
+#ai-attestation-modal.aui-dialog2::before {
+    display: none !important;
+}
+#ai-attestation-modal .aui-dialog2-header.citi-ai-title {
+    background: linear-gradient(135deg, #255BE3 0%, #1d4ed8 100%);
+    color: white;
+    padding: 16px 20px 14px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: none;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(37, 91, 227, 0.15);
+}
+#ai-attestation-modal .aui-dialog2-header.citi-ai-title
+.aui-dialog2-header-main {
+    color: white !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    font-family: inherit !important;
+    text-shadow: none !important;
+}
+#ai-attestation-modal .aui-dialog2-content.citi-ai-body {
+    padding: 16px 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: inherit !important;
+    line-height: 1.5;
+    background: #fafbfc;
+    font-size: 14px !important;
+}
+/* Simplified scrollbar styling for better compatibility */
+#ai-attestation-modal
+.aui-dialog2-content.citi-ai-body::-webkit-scrollbar {
+    width: 8px;
+}
+#ai-attestation-modal
+.aui-dialog2-content.citi-ai-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+#ai-attestation-modal
+.aui-dialog2-content.citi-ai-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+#ai-attestation-modal
+.aui-dialog2-content.citi-ai-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+.citi-ai-section {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 0;
+    word-wrap: break-word;
+    background: white;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border-left: 3px solid #255BE3;
+}
+.citi-ai-icon {
+    width: 32px;
+    flex: 0 0 32px;
+    display: flex;
+    justify-content: center;
+    margin-top: 1px;
+}
+.citi-ai-icon-circle {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #dc3545;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+    color: #dc3545;
+    background: #fff5f5;
+    box-shadow: 0 1px 3px rgba(220, 53, 69, 0.15);
+}
+.citi-ai-icon-emoji {
+    font-size: 20px;
+    line-height: 1;
+}
+.citi-ai-content {
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+}
+.citi-ai-heading {
+    font-size: 13px !important; /* Fixed: Reduced from 16px */
+    font-weight: 500 !important; /* Fixed: Reduced from 600 */
+    color: #1a1a1a !important;
+    margin: 0 0 8px 0 !important;
+    word-wrap: break-word;
+}
+.citi-ai-text {
+    margin: 0 !important;
+    color: #4a5568 !important;
+    line-height: 1.5 !important;
+    font-size: 12px !important; /* Fixed: Reduced from 14px */
+    word-wrap: break-word;
+    text-align: justify;
+}
+.citi-ai-list {
+    margin: 8px 0 0 0 !important;
+    padding-left: 20px !important;
+    color: #4a5568 !important;
+    line-height: 1.5 !important;
+    font-size: 12px !important; /* Fixed: Reduced from 14px */
+}
+.citi-ai-list li {
+    margin: 8px 0 !important;
+    word-wrap: break-word;
+    text-align: justify;
+}
+.citi-ai-list li b {
+    color: #2d3748 !important;
+    font-weight: 600 !important;
+}
+.citi-ai-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e2e8f0,
+transparent);
+    margin: 6px 0;
+}
+#ai-attestation-modal .aui-dialog2-footer.citi-ai-footer {
+    padding: 16px 20px 20px;
+    border-top: 1px solid #e2e8f0;
+    text-align: left;
+    background: #f8fafc;
+    border-radius: 0 0 8px 8px;
+}
+#ai-attestation-modal .aui-dialog2-footer-actions {
+    width: 100%;
+    text-align: left !important; /* Fixed: Keep footer content
+left-aligned for checkbox, center only button separately */
+}
+.citi-ai-checkbox-row {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: flex-start !important;
+    color: #4a5568 !important;
+    font-size: 12px !important; /* Fixed: Reduced from 14px */
+    margin-bottom: 16px !important;
+    user-select: none !important;
+    cursor: pointer !important;
+    line-height: 1.5 !important;
+    font-weight: 500 !important;
+    justify-content: flex-start !important; /* Fixed: Keep checkbox text
+left-aligned */
+}
+.citi-ai-checkbox-row input {
+    margin-top: 2px !important;
+    width: 16px !important;
+    height: 16px !important;
+    accent-color: #255BE3 !important;
+    border-radius: 3px !important;
+    flex-shrink: 0 !important;
+}
+.citi-ai-checkbox-row span {
+    flex: 1;
+    word-wrap: break-word;
+}
+/* Fixed button styling to ensure visibility and proper states */
+#ai-attestation-modal .citi-ai-btn.aui-button {
+    width: 200px !important; /* Fixed: Reduced from 100% to reasonable
+width */
+    height: 32px !important; /* Fixed: Reduced from 40px */
+    border-radius: 6px !important;
+    border: none !important;
+    font-size: 12px !important; /* Fixed: Reduced from 14px */
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+    text-transform: none !important;
+    display: block !important;
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 1 !important;
+    margin: 0 auto !important; /* Center align the button */
+}
+#ai-attestation-modal .citi-ai-btn.aui-button:disabled {
+    background: #e2e8f0 !important;
+    color: #a0aec0 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.6 !important;
+}
+#ai-attestation-modal .citi-ai-btn.aui-button:not(:disabled) {
+    background: #255BE3 !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(37, 91, 227, 0.25) !important;
+    opacity: 1 !important;
+}
+#ai-attestation-modal .citi-ai-btn.aui-button:not(:disabled):hover {
+    background: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 91, 227, 0.3) !important;
+}
+#ai-attestation-modal .citi-ai-btn.aui-button:not(:disabled):active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(37, 91, 227, 0.3) !important;
+}
+#ai-attestation-modal .citi-ai-body a {
+    color: #255BE3 !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid transparent !important;
+    transition: all 0.2s ease !important;
+}
+#ai-attestation-modal .citi-ai-body a:hover {
+    border-bottom-color: #255BE3 !important;
+    color: #1d4ed8 !important;
+}
+/* Ensure modal doesn't interfere with other AJS dialogs */
+.aui-blanket + #ai-attestation-modal {
+    z-index: 3001 !important;
+}
+/* Responsive design with smaller sizes */
+@media (max-width: 768px) {
+    #ai-attestation-modal.aui-dialog2 {
+        width: 92vw !important;
+        max-width: 92vw !important;
+        max-height: 90vh !important;
+    }
+    #ai-attestation-modal .aui-dialog2-header.citi-ai-title
+.aui-dialog2-header-main {
+        font-size: 16px !important;
+    }
+    #ai-attestation-modal .aui-dialog2-header.citi-ai-title {
+        padding: 14px 16px 12px;
+    }
+    #ai-attestation-modal .aui-dialog2-content.citi-ai-body {
+        padding: 14px 16px;
+        max-height: 55vh;
+        font-size: 13px !important;
+    }
+    .citi-ai-section {
+        gap: 12px;
+        padding: 14px;
+        margin-bottom: 10px;
+    }
+    .citi-ai-heading {
+        font-size: 15px !important;
+    }
+    .citi-ai-text, .citi-ai-list {
+        font-size: 13px !important;
+    }
+    .citi-ai-checkbox-row {
+        font-size: 13px !important;
+    }
+    #ai-attestation-modal .citi-ai-btn.aui-button {
+        height: 38px !important;
+        font-size: 13px !important;
+    }
+}
+@media (max-width: 480px) {
+    #ai-attestation-modal.aui-dialog2 {
+        width: 96vw !important;
+        max-height: 95vh !important;
+    }
+    #ai-attestation-modal .aui-dialog2-content.citi-ai-body {
+        max-height: 60vh;
+    }
+}
+/* Ensure focus management doesn't conflict */
+#ai-attestation-modal:focus {
+    outline: none !important;
+}
+#ai-attestation-modal .citi-ai-btn.aui-button:focus {
+    outline: 2px solid rgba(37, 91, 227, 0.5) !important;
+    outline-offset: 1px !important;
+}
+#ai-attestation-checkbox:focus {
+    outline: 2px solid #255BE3 !important;
+    outline-offset: 1px !important;
+}
+/* Prevent interference with other Jira modals and buttons */
+body.aui-dialog2-open #ai-attestation-modal {
+    z-index: 3001 !important;
+}
+/* Fix for Jira's create button and other functionality */
+.aui-dialog2:not(#ai-attestation-modal) {
+    z-index: 3010 !important;
+}
+.aui-blanket:not(.ai-attestation-blanket) {
+    z-index: 3009 !important;
+}
+/* Additional fixes for Jira modal conflicts and z-index issues */
+/* Ensure main content modals use higher z-index than attestation modal
+*/
+.my-custom-modal.aui-dialog2 {
+    width: 80vw !important;
+    max-width: 80vw !important;
+    z-index: 4000 !important; /* Higher than attestation modal */
+}
+/* Override AJS modal backdrop to prevent conflicts */
+.aui-blanket {
+    z-index: 2999 !important;
+}
+/* Specific fix for attestation modal blanket */
+#ai-attestation-modal + .aui-blanket {
+    z-index: 2999 !important;
+}
+/* Prevent main modal from being greyed out when attestation is open */
+.aui-dialog2.my-custom-modal {
+    z-index: 4000 !important;
+}
+/* Fix for create issue button and other Jira native dialogs */
+#create-issue-dialog,
+.create-issue-dialog,
+.aui-dialog2:not(#ai-attestation-modal):not(.my-custom-modal) {
+    z-index: 5000 !important;
+}
+/* Fix for native Jira create button modal */
+.aui-dialog2[aria-labelledby*="create"] {
+    z-index: 5000 !important;
+}
+/* Ensure Jira's native blankets work correctly */
+.aui-blanket:not([data-plugin="scanr"]) {
+    z-index: 4999 !important;
+}
+/* Fix header size to match Jira styling */
+#ai-attestation-modal .aui-dialog2-header.citi-ai-title
+.aui-dialog2-header-main {
+    font-size: 14px !important; /* Reduced from 18px to match Jira */
+    font-weight: 500 !important; /* Reduced from 600 */
+}
+#ai-attestation-modal .aui-dialog2-content.citi-ai-body {
+    font-size: 12px !important; /* Reduced from 14px */
+}
+.citi-ai-heading {
+    font-size: 13px !important; /* Reduced from 16px */
+    font-weight: 500 !important; /* Reduced from 600 */
+}
+.citi-ai-text, .citi-ai-list {
+    font-size: 12px !important; /* Reduced from 14px */
+}
+.citi-ai-checkbox-row {
+    font-size: 12px !important; /* Reduced from 14px */
+}
+#ai-attestation-modal .citi-ai-btn.aui-button {
+    font-size: 12px !important; /* Reduced from 14px */
+    height: 32px !important; /* Reduced from 40px to match Jira buttons
+*/
+}
+/* Ensure backdrop clicks don't close the modal accidentally */
+#ai-attestation-modal {
+    pointer-events: auto !important;
+}
+/* Fix for mobile responsive sizes */
+@media (max-width: 768px) {
+    #ai-attestation-modal .aui-dialog2-header.citi-ai-title
+.aui-dialog2-header-main {
+        font-size: 13px !important;
+    }
+    #ai-attestation-modal .aui-dialog2-content.citi-ai-body {
+        font-size: 11px !important;
+    }
+    .citi-ai-heading {
+        font-size: 12px !important;
+    }
+    .citi-ai-text, .citi-ai-list {
+        font-size: 11px !important;
+    }
+    .citi-ai-checkbox-row {
+        font-size: 11px !important;
+    }
+    #ai-attestation-modal .citi-ai-btn.aui-button {
+        height: 30px !important;
+        font-size: 11px !important;
+    }
+}
+</style>
