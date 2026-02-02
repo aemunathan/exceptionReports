@@ -1,141 +1,86 @@
-Perfect — these two screenshots show **exactly** where the flow breaks.
+Yes — **this function needs a small change**, but you do **not** need to rewrite the whole thing.
 
-### What’s wrong in your current implementation (from your screenshots)
+### Why a change is needed
 
-#### 1) You run the scan **while the policy modal is still “in the middle of closing”**
+Your current `initButtonClickHandler()` uses:
 
-In your accept handler you do:
+* `AJS.$("#show-popup").click(...)` and a `.data('events-attached')` flag.
 
-```js
-dialog.hide();
-attestationAccepted = true;
-if (onAccept) onAccept();
-```
+In Jira issue view (SPA-ish), the button can be re-rendered and the element replaced, so the `.data()` flag can be lost and **duplicate handlers** can be attached (your logs show repeated init). Duplicate handlers = multiple modals/blankets = greyed screen.
 
-So the **Scan Results modal opens while the policy modal blanket is still active** → results modal appears greyed / behind / unclickable.
-
-#### 2) In `showAttestationModal()` you are manually fighting AUI:
-
-You are doing things like:
-
-* `existingModal.removeAttr('data-aui-focus')`
-* `existingModal.removeAttr('data-aui-blanketed')`
-* forcing CSS `z-index: 3000`, `display:block`, `pointer-events:auto`
-* forcing `aria-hidden=false`
-
-Those override AUI dialog2’s internal state machine and are a common reason for **stuck blankets** and **broken close behavior**.
-
-✅ The fix is to **let AUI manage the dialog lifecycle**, and only “continue scan” after the dialog fully hides.
+So I recommend switching to a **namespaced off/on delegated binding**. It’s the most reliable way in Jira.
 
 ---
 
-# Fix #1 — Change ONLY the accept button handler (most important)
+# ✅ What to remove (only this portion)
 
-In `bindAttestationModal(onAccept, onCancel)` replace your success block with this:
+Inside `initButtonClickHandler()`, remove everything from:
 
 ```js
-if (success) {
-    console.log("[DEBUG] Attestation saved successfully, hiding modal");
+if (AJS.$("#show-popup").length && !AJS.$("#show-popup").data('events-attached')) {
+    console.log("[DEBUG] Attaching click event to show-popup button");
 
-    var $dlgEl = jQuery('#ai-attestation-modal');
-    var dialog = AJS.dialog2('#ai-attestation-modal');
-
-    // Continue ONLY after the modal is fully hidden (blanket removed)
-    $dlgEl.one('aui-dialog2-hide.scanr', function () {
-        console.log("[DEBUG] Attestation modal fully hidden, proceeding");
-        attestationAccepted = true;
-        if (onAccept) onAccept();
+    AJS.$("#show-popup").click(function(e) {
+        ...
     });
 
-    dialog.hide();
-} else {
-    alert('Failed to save attestation. Please try again.');
+    AJS.$("#show-popup").data('events-attached', true);
 }
 ```
 
-**Why this works:** the scan won’t start until AUI has removed the blanket and finished closing.
+(That whole `if (...) { ... }` block.)
+
+Keep the function wrapper and your debug line.
 
 ---
 
-# Fix #2 — Remove the “manual state forcing” from `showAttestationModal()`
-
-In your `showAttestationModal(onAccept, onCancel)` **delete this entire “Force proper modal state” block**:
+# ✅ Replace it with this (drop-in)
 
 ```js
-// Force proper modal state
-setTimeout(function() {
-  existingModal.attr('aria-hidden','false');
-  existingModal.css({
-    'z-index':'3000',
-    'display':'block',
-    'pointer-events':'auto'
-  });
-  existingModal.focus();
-}, 100);
-```
+function initButtonClickHandler() {
+    console.log("[DEBUG] Initializing button click handler");
 
-Also remove these lines (don’t touch AUI internal attributes):
+    // Reliable in Jira (handles re-render): remove previous handler, then bind again
+    AJS.$(document)
+        .off('click.scanr', '#show-popup')
+        .on('click.scanr', '#show-popup', function (e) {
+            console.log("[DEBUG] Show popup button clicked");
+            e.preventDefault();
+            e.stopPropagation();
 
-```js
-existingModal.attr('aria-hidden', 'false');
-existingModal.removeAttr('data-aui-focus');
-existingModal.removeAttr('data-aui-blanketed');
-```
+            getAttestationProperty(function (attestation) {
+                attestationChecked = true;
 
-✅ Keep it simple:
+                if (isAttestationValid(attestation)) {
+                    console.log("[DEBUG] Valid attestation found, proceeding with scan");
+                    attestationAccepted = true;
+                    proceedWithScan();
+                } else {
+                    console.log("[DEBUG] No valid attestation, showing modal");
+                    showAttestationModal(
+                        proceedWithScan,
+                        function () { console.log("[DEBUG] Attestation cancelled by user"); }
+                    );
+                }
+            });
 
-```js
-function showAttestationModal(onAccept, onCancel) {
-    console.log("[DEBUG] Showing attestation modal");
-
-    var $modal = jQuery('#ai-attestation-modal');
-    if ($modal.length === 0) {
-        console.error("[DEBUG] Attestation modal template not found");
-        alert('Attestation modal not available. Please contact the administrator.');
-        if (onCancel) onCancel();
-        return;
-    }
-
-    // Bind events before showing
-    bindAttestationModal(onAccept, onCancel);
-
-    // Show using AUI only
-    AJS.dialog2('#ai-attestation-modal').show();
+            return false;
+        });
 }
 ```
 
 ---
 
-# Fix #3 — Make your event unbinding safe (use namespace)
+## Do you still need the earlier suggestions for this function?
 
-Right now you do `.off('click')` which can remove other handlers accidentally and still allow duplicates in some Jira re-render situations.
-
-Change your bindings like this:
-
-```js
-jQuery('#ai-attestation-accept').off('click.scanr').on('click.scanr', function(e) { ... });
-jQuery('#ai-attestation-cancel').off('click.scanr').on('click.scanr', function(e) { ... });
-jQuery('#ai-attestation-checkbox').off('change.scanr').on('change.scanr', function() { ... });
-```
-
-This prevents duplicates **without breaking other code**.
+**Yes — this is the only part you need from earlier suggestions for this function.**
+Everything else (hide-event sequencing, removing manual modal CSS forcing) stays in the modal functions, not here.
 
 ---
 
-# Why you are seeing “greyed out results + no close”
+## Quick validation (after replacing)
 
-Because:
+* Reload issue page → click Scan → you should see **only one** “Show popup button clicked” log per click.
+* If you still see multiple logs per click, then the init is being invoked multiple times and you’ll need the “init once” guard too (but try this first).
 
-* the policy modal is still holding the blanket when your results modal opens (race condition), **and**
-* manual z-index / aria / data-aui-* changes can confuse AUI so it doesn’t restore interaction correctly.
-
-After the 3 fixes above, the flow becomes:
-
-✅ Click Scan
-✅ If not accepted → show attestation modal
-✅ Click Accept → save → **wait for hide event** → then start scan
-✅ Results modal opens normally, clickable, close works, no stuck grey overlay.
-
----
-
-If you apply only ONE change first, do **Fix #1 (hide event before onAccept)** — that alone typically resolves the “second screen hidden/greyed” issue.
+If you want, share the line where `initButtonClickHandler()` is called (e.g., in `initStuff()`), and I’ll tell you whether you should add the one-time guard there.
